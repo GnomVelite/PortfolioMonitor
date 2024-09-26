@@ -23,3 +23,15 @@ go.work.sum
 
 # env file
 .env*
+.env.*
+
+# Node modules (for the Remix frontend)
+node_modules/
+client/node_modules/
+
+# Build outputs and local cache
+dist/
+build/
+tmp/
+*.log
+client/.cache/

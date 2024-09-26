@@ -1,0 +1,5 @@
+client/* linguist-vendored
+
+*.go linguist-language=Go
+*.ts linguist-vendored
+*.tsx linguist-vendored
