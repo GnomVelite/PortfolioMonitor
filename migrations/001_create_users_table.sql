@@ -1,8 +1,20 @@
 CREATE TABLE users (
-	id SERIAL PRIMARY KEY,
-	email VARCHAR(255) UNIQUE NOT NULL,
-	username VARCHAR(100),
-	password_hash TEXT NOT NULL,
-	created_at TIMESTAMPTZ DEFAULT NOW(),
-	updated_at TIMESTAMPTZ DEFAULT NOW()
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE auth_providers (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    provider VARCHAR(50) NOT NULL,
+    provider_id VARCHAR(255),
+    email VARCHAR(100),
+    password_hash VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (provider, provider_id),
+    UNIQUE (provider, email)
 );
