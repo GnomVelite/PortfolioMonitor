@@ -81,13 +81,19 @@ func (s *authService) Login(email, password string) (string, error) {
 	return tokenString, nil
 }
 
-func (s *authService) OAuthLogin(provider string, providerID string, email string) (string, error) {
+func (s *authService) OAuthLogin(provider string, providerID string, email string, name string) (string, error) {
 	// Check if auth provider exists
 	authProvider, err := s.authProviderRepo.GetAuthProviderByProviderID(provider, providerID)
 	if err != nil {
-		// Create new user and auth provider
-		user := &models.User{
-			Name:  "", // You might get this from OAuth provider
+		return "", err
+	}
+
+	var user *models.User
+
+	if authProvider == nil {
+		// Create new user
+		user = &models.User{
+			Name:  name, // Use the name provided
 			Email: email,
 		}
 		err = s.userRepo.CreateUser(user)
@@ -95,6 +101,7 @@ func (s *authService) OAuthLogin(provider string, providerID string, email strin
 			return "", err
 		}
 
+		// Create new auth provider
 		authProvider = &models.AuthProvider{
 			UserID:     user.ID,
 			Provider:   provider,
@@ -105,8 +112,15 @@ func (s *authService) OAuthLogin(provider string, providerID string, email strin
 		if err != nil {
 			return "", err
 		}
+	} else {
+		// Fetch the user associated with the auth provider
+		user, err = s.userRepo.GetUserByID(authProvider.UserID)
+		if err != nil {
+			return "", err
+		}
 	}
 
+	// Generate JWT
 	userIDStr := strconv.Itoa(authProvider.UserID)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(72 * time.Hour).Unix(),

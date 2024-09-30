@@ -1,0 +1,8 @@
+func AuthMiddleware(jwtSecret string) gin.HandlerFunc {
+    return func(c *gin.Context) {
+        tokenString := c.GetHeader("Authorization")
+        // Token validation logic
+        // If valid, proceed
+        // If invalid, abort with error
+    }
+}

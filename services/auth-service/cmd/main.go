@@ -9,10 +9,8 @@ import (
 	"github.com/GnomVelite/PortfolioMonitor/services/auth-service/internal/services"
 	"github.com/gin-gonic/gin"
 
-	//"github.com/GnomVelite/PortfolioMonitor/services/auth-service/internal/db"
 	//"github.com/GnomVelite/PortfolioMonitor/services/auth-service/internal/handlers"
 	"github.com/GnomVelite/PortfolioMonitor/services/auth-service/internal/repositories"
-	//"github.com/GnomVelite/PortfolioMonitor/services/auth-service/internal/db"
 )
 
 func main() {

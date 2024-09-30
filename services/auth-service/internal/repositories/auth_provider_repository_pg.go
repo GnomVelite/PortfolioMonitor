@@ -22,25 +22,41 @@ func (r *authProviderRepository) CreateAuthProvider(ap *models.AuthProvider) err
 		Scan(&ap.ID)
 }
 
-func (r *authProviderRepository) GetAuthProvider(provider, identifier string) (*models.AuthProvider, error) {
+//	func (r *authProviderRepository) GetAuthProvider(provider, identifier string) (*models.AuthProvider, error) {
+//		ap := &models.AuthProvider{}
+//		var query string
+//		var err error
+//		if provider == "local" {
+//			query = `
+//	            SELECT id, user_id, provider, provider_id, email, password_hash, created_at, updated_at
+//	            FROM auth_providers
+//	            WHERE provider = $1 AND email = $2`
+//			err = r.db.QueryRow(query, provider, identifier).
+//				Scan(&ap.ID, &ap.UserID, &ap.Provider, &ap.ProviderID, &ap.Email, &ap.PasswordHash, &ap.CreatedAt, &ap.UpdatedAt)
+//		} else {
+//			query = `
+//	            SELECT id, user_id, provider, provider_id, email, password_hash, created_at, updated_at
+//	            FROM auth_providers
+//	            WHERE provider = $1 AND provider_id = $2`
+//			err = r.db.QueryRow(query, provider, identifier).
+//				Scan(&ap.ID, &ap.UserID, &ap.Provider, &ap.ProviderID, &ap.Email, &ap.PasswordHash, &ap.CreatedAt, &ap.UpdatedAt)
+//		}
+//		if err != nil {
+//			if err == sql.ErrNoRows {
+//				return nil, nil // Not found
+//			}
+//			return nil, err
+//		}
+//		return ap, nil
+//	}
+func (r *authProviderRepository) GetAuthProviderByEmail(provider, email string) (*models.AuthProvider, error) {
 	ap := &models.AuthProvider{}
-	var query string
-	var err error
-	if provider == "local" {
-		query = `
-            SELECT id, user_id, provider, provider_id, email, password_hash, created_at, updated_at
-            FROM auth_providers
-            WHERE provider = $1 AND email = $2`
-		err = r.db.QueryRow(query, provider, identifier).
-			Scan(&ap.ID, &ap.UserID, &ap.Provider, &ap.ProviderID, &ap.Email, &ap.PasswordHash, &ap.CreatedAt, &ap.UpdatedAt)
-	} else {
-		query = `
-            SELECT id, user_id, provider, provider_id, email, password_hash, created_at, updated_at
-            FROM auth_providers
-            WHERE provider = $1 AND provider_id = $2`
-		err = r.db.QueryRow(query, provider, identifier).
-			Scan(&ap.ID, &ap.UserID, &ap.Provider, &ap.ProviderID, &ap.Email, &ap.PasswordHash, &ap.CreatedAt, &ap.UpdatedAt)
-	}
+	query := `
+        SELECT id, user_id, provider, provider_id, email, password_hash, created_at, updated_at
+        FROM auth_providers
+        WHERE provider = $1 AND email = $2`
+	err := r.db.QueryRow(query, provider, email).
+		Scan(&ap.ID, &ap.UserID, &ap.Provider, &ap.ProviderID, &ap.Email, &ap.PasswordHash, &ap.CreatedAt, &ap.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil // Not found
@@ -50,6 +66,22 @@ func (r *authProviderRepository) GetAuthProvider(provider, identifier string) (*
 	return ap, nil
 }
 
+func (r *authProviderRepository) GetAuthProviderByProviderID(provider, providerID string) (*models.AuthProvider, error) {
+	ap := &models.AuthProvider{}
+	query := `
+        SELECT id, user_id, provider, provider_id, email, password_hash, created_at, updated_at
+        FROM auth_providers
+        WHERE provider = $1 AND provider_id = $2`
+	err := r.db.QueryRow(query, provider, providerID).
+		Scan(&ap.ID, &ap.UserID, &ap.Provider, &ap.ProviderID, &ap.Email, &ap.PasswordHash, &ap.CreatedAt, &ap.UpdatedAt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil // Not found
+		}
+		return nil, err
+	}
+	return ap, nil
+}
 func (r *authProviderRepository) UpdateAuthProvider(ap *models.AuthProvider) error {
 	query := `
         UPDATE auth_providers SET email = $1, password_hash = $2, updated_at = NOW()

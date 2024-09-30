@@ -6,7 +6,7 @@ import (
 )
 
 type AuthService interface {
-	Register(email, name, password string) error
+	Register(user *models.User, password string) error
 	Login(email, password string) (string, error)
 	OAuthLogin(provider, providerID, email, name string) (string, error)
 	UpdateUser(user *models.User) error
